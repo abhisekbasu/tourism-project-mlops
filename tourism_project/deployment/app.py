@@ -79,3 +79,5 @@ if st.button("Predict"):
         st.info(f"Purchase probability (class 1): {proba:.3f}")
 
 st.caption(f"Model source: {HF_MODEL_REPO}/{MODEL_FILENAME}")
+
+# Minor CI test change
