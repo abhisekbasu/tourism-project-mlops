@@ -33,7 +33,7 @@ model, THRESHOLD = load_model_and_threshold()
 
 st.title("Tourism Package Prediction")
 st.markdown(
-    "Predicting whether a customer will purchase the **Wellness Tourism Package** "
+    "Predict whether a customer will purchase the **Wellness Tourism Package** "
     f"(`ProdTaken = 1`).  Decision threshold: `{THRESHOLD}`"
 )
 
