@@ -37,7 +37,7 @@ def load_model_and_threshold():
 model, THRESHOLD = load_model_and_threshold()
 
 # ── UI ─────────────────────────────────────────────────────────────────────────
-st.title("🌴 Tourism Package Prediction")
+st.title("Tourism Package Prediction")
 st.markdown(
     "Predict whether a customer will purchase the **Wellness Tourism Package** "
     f"(`ProdTaken = 1`).  Decision threshold: `{THRESHOLD}`"
@@ -102,7 +102,7 @@ if st.button("🔍 Predict", use_container_width=True):
     st.markdown("---")
     col_a, col_b = st.columns(2)
     col_a.metric("Purchase Probability", f"{proba:.1%}")
-    col_b.metric("Prediction (ProdTaken)", "✅ Will Buy" if pred == 1 else "❌ Will Not Buy")
+    col_b.metric("Prediction (ProdTaken)", "Will Buy" if pred == 1 else "Will Not Buy")
 
     if pred == 1:
         st.success("High likelihood of purchase — recommend proactive outreach.")
