@@ -1,5 +1,5 @@
-# streamlit>=1.37.0 is required for numpy 2.x compatibility (numpy<3 constraint).
-# All versions pinned to match the training environment.
+# All versions pinned to match the training environment exactly
+# streamlit 1.41.0 is the minimum version that supports numpy 2.x
 streamlit==1.41.0
 pandas==2.2.2
 numpy==2.0.2
