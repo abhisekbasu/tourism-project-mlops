@@ -16,49 +16,55 @@ def upload_to_hf_dataset(repo_id: str, local_path: str, path_in_repo: str) -> No
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
-    # Drop obvious non-predictive / index-like columns if present
     drop_cols = [c for c in ["CustomerID", "Unnamed: 0"] if c in df.columns]
     if drop_cols:
         df.drop(columns=drop_cols, inplace=True)
 
-    # Basic string cleanup for object columns (safe, non-destructive)
     for col in df.select_dtypes(include=["object"]).columns:
         df[col] = df[col].astype(str).str.strip()
 
     return df
 
 def main():
-    # Required env vars (friendly for CI/CD)
     hf_repo_id = os.environ.get("HF_DATASET_REPO")
-    local_csv_path = os.environ.get("LOCAL_CSV_PATH")  # repo path in CI/CD will be like: "data/tourism.csv"
+    local_csv_path = os.environ.get("LOCAL_CSV_PATH")
 
     if not hf_repo_id:
-        raise ValueError("Missing HF_DATASET_REPO. Example: 'abhisekbasu/tourism-package-data'")
+        raise ValueError("Missing HF_DATASET_REPO")
     if not local_csv_path:
-        raise ValueError("Missing LOCAL_CSV_PATH. Example: 'data/tourism.csv' or '/content/.../data/tourism.csv'")
+        raise ValueError("Missing LOCAL_CSV_PATH")
     if not os.path.exists(local_csv_path):
         raise FileNotFoundError(f"Raw CSV not found at: {local_csv_path}")
 
     target_col = os.environ.get("TARGET_COL", "ProdTaken")
     test_size = float(os.environ.get("TEST_SIZE", "0.2"))
     random_state = int(os.environ.get("RANDOM_STATE", "42"))
-
-    # Output paths (local)
     output_dir = os.environ.get("OUTPUT_DIR", "data/processed")
+
     os.makedirs(output_dir, exist_ok=True)
 
-    # 1) Upload raw data to HF (Option 2 requirement)
+    # ---------------------------------------------------
+    # 1️⃣ Upload raw data to HF
+    # ---------------------------------------------------
     upload_to_hf_dataset(hf_repo_id, local_csv_path, "raw/tourism.csv")
-    print("Uploaded raw data to HF:", f"{hf_repo_id}/raw/tourism.csv")
+    print("✅ Raw uploaded to HF")
 
-    # 2) Load + clean
-    df = pd.read_csv(local_csv_path)
+    # ---------------------------------------------------
+    # 2️⃣ Load raw dataset DIRECTLY from HF
+    # ---------------------------------------------------
+    hf_raw_path = f"hf://datasets/{hf_repo_id}/raw/tourism.csv"
+    print("📥 Loading dataset from HF:", hf_raw_path)
+
+    df = pd.read_csv(hf_raw_path)
+
     if target_col not in df.columns:
-        raise ValueError(f"Target column '{target_col}' not found in dataset columns: {list(df.columns)}")
+        raise ValueError(f"Target column '{target_col}' not found")
 
     df_clean = clean_data(df)
 
-    # 3) Split (stratified to preserve target distribution)
+    # ---------------------------------------------------
+    # 3️⃣ Split
+    # ---------------------------------------------------
     y = df_clean[target_col]
     X = df_clean.drop(columns=[target_col])
 
@@ -78,14 +84,15 @@ def main():
     train_df.to_csv(train_path, index=False)
     test_df.to_csv(test_path, index=False)
 
-    print("Saved locally:", train_path, test_path)
+    print("✅ Train/Test saved locally")
 
-    # 4) Upload train/test back to HF dataset repo
+    # ---------------------------------------------------
+    # 4️⃣ Upload processed splits back to HF
+    # ---------------------------------------------------
     upload_to_hf_dataset(hf_repo_id, train_path, "processed/train.csv")
     upload_to_hf_dataset(hf_repo_id, test_path, "processed/test.csv")
 
-    print("Uploaded processed splits to HF:",
-          f"{hf_repo_id}/processed/train.csv and {hf_repo_id}/processed/test.csv")
+    print("✅ Processed splits uploaded to HF")
 
 if __name__ == "__main__":
     main()
