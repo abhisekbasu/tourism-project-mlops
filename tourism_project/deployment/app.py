@@ -52,13 +52,13 @@ with col1:
     city_tier                = st.selectbox("CityTier",                      [1, 2, 3])
     duration_of_pitch        = st.number_input("DurationOfPitch (min)",      min_value=0.0,  max_value=120.0, value=15.0)
     number_of_person_visiting = st.number_input("NumberOfPersonVisiting",    min_value=1,    max_value=10,  value=2)
-    number_of_followups      = st.number_input("NumberOfFollowups",          min_value=0.0,  max_value=10.0, value=2.0)
+    number_of_followups      = st.selectbox("NumberOfFollowups",          [1, 2, 3, 4, 5, 6])
     preferred_property_star  = st.number_input("PreferredPropertyStar",      min_value=1.0,  max_value=5.0, value=3.0)
-    number_of_trips          = st.number_input("NumberOfTrips",              min_value=0.0,  max_value=20.0, value=2.0)
+    number_of_trips          = st.selectbox("NumberOfTrips",              [1, 2, 3, 4, 5, 6, 7, 8, 19, 20, 21, 22])
     passport                 = st.selectbox("Passport (0=No, 1=Yes)",        [0, 1])
     pitch_satisfaction_score = st.slider("PitchSatisfactionScore",           1, 5, 3)
     own_car                  = st.selectbox("OwnCar (0=No, 1=Yes)",          [0, 1])
-    number_of_children       = st.number_input("NumberOfChildrenVisiting",   min_value=0.0,  max_value=5.0, value=0.0)
+    number_of_children       = st.selectbox("NumberOfChildrenVisiting",   [0, 1, 2, 3])
     monthly_income           = st.number_input("MonthlyIncome (₹)",          min_value=0.0,  value=30000.0, step=1000.0)
 
 with col2:
